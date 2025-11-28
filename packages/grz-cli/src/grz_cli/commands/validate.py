@@ -23,7 +23,13 @@ log = logging.getLogger(__name__)
     hidden=True,
     help="Whether to use grz-check to perform validation",
 )
-def validate(submission_dir, config_file, force, threads, with_grz_check):
+@click.option(
+    "--metadata-only",
+    is_flag=True,
+    default=False,
+    help="Only validate metadata and skip file validations.",
+)
+def validate(submission_dir, config_file, force, threads, with_grz_check, metadata_only):
     """
     Validate the submission.
 
@@ -43,6 +49,11 @@ def validate(submission_dir, config_file, force, threads, with_grz_check):
         encrypted_files_dir=submission_dir / "encrypted_files",
         threads=threads,
     )
-    worker_inst.validate(identifiers=config.identifiers, force=force, with_grz_check=with_grz_check)
+    worker_inst.validate(
+        identifiers=config.identifiers,
+        force=force,
+        with_grz_check=with_grz_check,
+        metadata_only=metadata_only,
+    )
 
     log.info("Validation finished!")

@@ -90,13 +90,14 @@ class Worker:
         )
         return encrypted_submission
 
-    def validate(self, identifiers: IdentifiersModel, force=False, with_grz_check=True):
+    def validate(self, identifiers: IdentifiersModel, force=False, with_grz_check=True, metadata_only: bool = False):
         """
         Validate this submission
 
         :param identifiers: IdentifiersModel containing GRZ and LE identifiers.
         :param force: Force validation of already validated files
         :param with_grz_check: If True, use the grz-check tool for validation.
+        :param metadata_only: If True, only validate metadata and skip file validations.
         :raises SubmissionValidationError: if the validation fails
         """
         submission = self.parse_submission()
@@ -109,6 +110,10 @@ class Worker:
             raise SubmissionValidationError(error_msg)
         else:
             self.__log.info("Metadata validation successful!")
+
+        # If only metadata validation is desired, return early
+        if metadata_only:
+            return
 
         if force:
             # delete the log files if they exist
